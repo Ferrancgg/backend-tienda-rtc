@@ -1,18 +1,31 @@
-const isAuth = require("../../middlewares/auth")
-const authorize = require("../../middlewares/authorize")
-const { getAllProducts, createProduct, getProductById, deleteProduct, putProduct } = require("../controllers/productController")
+const isAuth = require("../../middlewares/auth");
+const authorize = require("../../middlewares/authorize");
+const upload = require("../../middlewares/file");
+const {
+  getAllProducts,
+  createProduct,
+  getProductById,
+  deleteProduct,
+  putProduct,
+} = require("../controllers/productController");
 
-const productRouter=require("express").Router()
-//role:customer//
-productRouter.get("/",getAllProducts)
+const productRouter = require("express").Router();
+///se tendran en cuenta la proteccion de las rutas, ///
+//clientes y dueño//
 
-//role:owner//
+productRouter.get("/", getAllProducts);
+productRouter.get("/:id", getProductById);
 
-productRouter.get("/",getAllProducts)
-productRouter.post("/",isAuth,authorize(["owner"]),createProduct)
-productRouter.get("/:id",getProductById)
-productRouter.delete("/:id",[isAuth],deleteProduct)
-productRouter.put("/:id",[isAuth],putProduct)
+//solo dueño role:owner//
 
+productRouter.post(
+  "/",
+  isAuth,
+  authorize(["owner"]),
+  upload.single("image"),
+  createProduct
+);
+productRouter.delete("/:id", isAuth, authorize(["owner"]), deleteProduct);
+productRouter.put("/:id", isAuth, authorize(["owner"]), putProduct);
 
-module.exports=productRouter
+module.exports = productRouter;
