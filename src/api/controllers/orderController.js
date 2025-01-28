@@ -17,11 +17,11 @@ const createOrder = async (req, res, next) => {
 const getAllOrder = async (req, res, next) => {
   try {
     const newOrder = await Order.find()
-      .populate(
-        "orderItems.product" // Rellenar la referencia del producto
+      .populate({path:"orderItems.product",select:"name price" }
+        // Rellenar la referencia del producto
       )
       .populate(
-        "user" // Rellenar la referencia del usuario
+        {path:"user",select:"name email"} // Rellenar la referencia del usuario
       );
     return res.status(201).json({ success: true, data: newOrder });
   } catch (err) {
@@ -35,7 +35,12 @@ const updateOrder = async (req, res, next) => {
     const oldOrder=Order.findById(id)
     const newOrder=new Order(req.body)
     newOrder._id=id
-    const newOrderDB=await Order.findByIdAndUpdate(id,newOrder,{new:true})
+    const newOrderDB=await Order.findByIdAndUpdate(id,newOrder,{new:true})  .populate(
+      {path:"orderItems.product",select:"name price" }
+    )
+    .populate(
+      {path:"user",select:"name email"}
+    );
     return res.status(200).json({success:true,data:newProduct})
 
   } catch (err) {
@@ -73,10 +78,11 @@ const getOrderById = async (req, res, next) => {
     const { id } = req.params;
     const order = await Order.findById(id)
       .populate(
-        "orderItems.product" // Rellenar la referencia del producto
+         {path:"orderItems.product",select:"name price" }// Rellenar la referencia del producto
       )
       .populate(
-        "user" // Rellenar la referencia del usuario
+        {path:"user",select:"name email"}
+        // Rellenar la referencia del usuario
       );
     return res.status(201).json({ success: true, data: order });
   } catch (err) {
