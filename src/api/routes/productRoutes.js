@@ -26,6 +26,6 @@ productRouter.post(
   createProduct
 );
 productRouter.delete("/:id", isAuth, authorize(["owner"]), deleteProduct);
-productRouter.put("/:id", isAuth, authorize(["owner"]), putProduct);
+productRouter.put("/:id", isAuth, authorize(["owner"]),upload.single("image"), putProduct);
 
 module.exports = productRouter;
