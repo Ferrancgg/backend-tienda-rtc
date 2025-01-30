@@ -1,164 +1,187 @@
-API para Gestión de Productos y Pedidos en una Tienda Online
+📌 API de Usuarios, Productos y Órdenes
+
+Este documento describe los endpoints disponibles en la API de usuarios, productos y órdenes, incluyendo los métodos, rutas y parámetros necesarios.
+
+📌 Repositorio
+
+🔗 Repositorio en GitHub: backend-tienda-rtc
+
+📌 Instalación y Uso
+
+Clona este repositorio:
+
+git clone https://github.com/Ferrancgg/backend-tienda-rtc.git
+
+Accede al directorio del proyecto:
+
+cd backend-tienda-rtc
+
+Instala las dependencias:
+
+npm install
+
+Inicia el servidor:
+
+npm start
+
+o en modo desarrollo:
+
+npm run dev
+
+📌 Endpoints de Usuarios
+
+Método
+
+Endpoint
 
 Descripción
 
-Una API para gestionar productos y pedidos de una tienda online. Los usuarios pueden registrarse, iniciar sesión y realizar pedidos. La API permite diferenciar entre dueños de la tienda y clientes:
+Body Params
 
-Dueños: Pueden gestionar los productos (crear, editar, eliminar) y ver los pedidos asociados a sus productos.
+POST
 
-Clientes: Pueden ver el catálogo, realizar pedidos y consultar sus propios pedidos.
+/api/users/register
 
-Modelos
+Registra un nuevo usuario
 
-1. User
+{ name, email, password, role }
+
+POST
+
+/api/users/login
+
+Inicia sesión y devuelve un token
+
+{ email, password }
+
+GET
+
+/api/users
+
+Obtiene todos los usuarios
+
+❌
+
+📌 Controladores de Órdenes
+
+📍 createOrder
+
+Descripción: Crea una nueva orden.
+
+Parámetros:
+
+user (ObjectId, obligatorio)
+
+orderItems (Array de objetos, obligatorio)
+
+shippingAddress (Objeto, obligatorio)
+
+paymentMethod (String, obligatorio)
+
+itemsPrice, taxPrice, shippingPrice, totalPrice (Number, obligatorio)
+
+Respuesta:
 
 {
-  name: String,
-  email: String (único),
-  password: String (hash),
-  avatar: String (URL de Cloudinary),
-  role: String (enum: ["owner", "customer"], default: "customer")
+  "success": true,
+  "data": {
+    "_id": "65g3fda1b2c3d4e5f6h7i8j9",
+    "user": "65e2d4cba9f8a7b6c3d2e1f0",
+    "orderItems": [
+      { "product": "65f2bca1a2a3e4f5g6h7i8j9", "quantity": 2 }
+    ],
+    "totalPrice": 120.00
+  }
 }
 
-Relaciones:
+📍 getAllOrder
 
-Asociado a productos como "dueño".
+Descripción: Obtiene todas las órdenes.
 
-Asociado a pedidos como "cliente".
-
-2. Product
+Respuesta:
 
 {
-  name: String,
-  description: String,
-  price: Number,
-  stock: Number,
-  image: String (URL de Cloudinary),
-  owner: ObjectId (referencia al modelo User)
-}
-
-Relaciones:
-
-Cada producto pertenece a un dueño (owner).
-
-Relacionado con pedidos.
-
-3. Order
-
-{
-  user: ObjectId (referencia al modelo User),
-  products: [
+  "success": true,
+  "data": [
     {
-      product: ObjectId (referencia al modelo Product),
-      quantity: Number
+      "_id": "65g3fda1b2c3d4e5f6h7i8j9",
+      "user": { "name": "Juan", "email": "juan@example.com" },
+      "orderItems": [
+        { "product": "Laptop", "price": 1200 }
+      ],
+      "totalPrice": 1200.00
     }
-  ],
-  totalPrice: Number,
-  status: String (enum: ["pending", "completed", "cancelled"], default: "pending")
+  ]
 }
 
-Relaciones:
+📍 getOrderById
 
-Asociado a un cliente (user).
+Descripción: Obtiene una orden por su ID.
 
-Incluye múltiples productos con cantidades específicas.
+Parámetros:
 
-Endpoints
+id (String, obligatorio)
 
-1. Autenticación
+Respuesta:
 
-POST /auth/register
+{
+  "success": true,
+  "data": {
+    "_id": "65g3fda1b2c3d4e5f6h7i8j9",
+    "user": { "name": "Juan", "email": "juan@example.com" },
+    "orderItems": [
+      { "product": "Laptop", "price": 1200 }
+    ],
+    "totalPrice": 1200.00
+  }
+}
 
-Registrar un nuevo usuario con validación de email único y contraseña segura.
+📍 updateOrder
 
-Parámetro adicional para especificar el rol (owner o customer).
+Descripción: Actualiza una orden existente.
 
-POST /auth/login
+Parámetros:
 
-Iniciar sesión y obtener un JWT válido por 1 hora.
+id (String, obligatorio)
 
-2. Usuarios
+orderItems, shippingAddress, paymentMethod (Opcionales)
 
-POST /auth/avatar
+Respuesta:
 
-Subir un avatar para el usuario autenticado usando Cloudinary.
+{
+  "success": true,
+  "data": {
+    "_id": "65g3fda1b2c3d4e5f6h7i8j9",
+    "orderItems": [
+      { "product": "Laptop Pro", "price": 1400 }
+    ],
+    "totalPrice": 1400.00
+  }
+}
 
-3. Productos
+📍 deleteOrder
 
-Para dueños (role: owner):
+Descripción: Elimina una orden por su ID.
 
-GET /products: Listar todos los productos creados por el dueño autenticado.
+Parámetros:
 
-POST /products: Crear un nuevo producto asociado al dueño.
+id (String, obligatorio)
 
-PUT /products/:id: Editar un producto creado por el dueño.
+Respuesta:
 
-DELETE /products/:id: Eliminar un producto creado por el dueño.
+{
+  "success": true,
+  "message": "Order deleted successfully",
+  "data": {
+    "_id": "65g3fda1b2c3d4e5f6h7i8j9"
+  }
+}
 
-Para clientes (role: customer):
+📌 Licencia
 
-GET /products: Listar todos los productos disponibles (sin autenticación).
+Este proyecto está bajo la licencia MIT. ¡Úsalo como quieras! 🚀
 
-4. Pedidos
+📌 Próximas actualizaciones
 
-Para clientes (role: customer):
+📌 Este documento se irá ampliando a medida que agreguemos más funcionalidades a la API.
 
-GET /orders: Listar los pedidos realizados por el cliente autenticado.
-
-POST /orders: Crear un nuevo pedido seleccionando productos del catálogo.
-
-GET /orders/:id: Ver los detalles de un pedido específico realizado por el cliente.
-
-Para dueños (role: owner):
-
-GET /orders: Listar los pedidos que incluyan productos creados por el dueño.
-
-Relaciones entre Modelos
-
-Usuario (dueño) - Producto
-
-Relación: owner en Product -> User.
-
-Usuario (cliente) - Pedido
-
-Relación: user en Order -> User.
-
-Producto - Pedido
-
-Relación: products en Order -> Product.
-
-Middlewares para Protección de Rutas
-
-1. Autenticación (JWT):
-
-Proteger todas las rutas que requieren autenticación (crear, editar, eliminar productos/pedidos).
-
-2. Autorización por rol:
-
-Dueños (role: owner): Permitir gestionar sus propios productos y ver pedidos asociados.
-
-Clientes (role: customer): Permitir realizar pedidos y ver sus propios pedidos.
-
-Ejemplo de middleware:
-
-const authorizeRole = (role) => {
-  return (req, res, next) => {
-    if (req.user.role !== role) {
-      return res.status(403).json({ message: "No tienes permiso para realizar esta acción." });
-    }
-    next();
-  };
-};
-
-// Uso en rutas
-router.post("/products", authenticateUser, authorizeRole("owner"), createProduct);
-
-Resumen Final
-
-Modelos: User (con roles), Product (relacionado con dueño), Order (relacionado con cliente y productos).
-
-Rutas específicas para roles: Los dueños gestionan productos y ven pedidos relacionados con sus productos. Los clientes pueden ver el catálogo, sus pedidos y detalles asociados.
-
-Middlewares: Implementar autenticación y autorización por roles.
-
-# backend-tienda-rtc

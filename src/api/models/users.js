@@ -42,13 +42,11 @@
 
 //     return next()
 
-
 // })
 
 // const Users = model("users", userSchema);
 
 // module.exports = Users;
-
 
 const mongoose = require("mongoose");
 const { Schema, model } = mongoose;
