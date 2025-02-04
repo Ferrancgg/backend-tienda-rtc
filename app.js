@@ -1,12 +1,23 @@
+
 const express = require("express");
 const connectDB = require("./src/config/db");
 const indexRouter = require("./src/api/routes/indexRouter");
 const setError = require("./src/middlewares/setError");
 const cloudinary = require("cloudinary").v2;
+const cors=require("cors");
+const limiter = require("./src/middlewares/rateLimiter");
+
+
+
 
 require("dotenv").config();
 const app = express();
 app.use(express.json());
+
+
+// ACTIVO LA CORS PARA QUE LA WEB PUEDA USARSE DESDE CUALQUIER ENTORNO
+app.use(cors())
+app.use(limiter)
 connectDB();
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,

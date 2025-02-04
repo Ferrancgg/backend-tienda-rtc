@@ -1,6 +1,7 @@
 const createError = require("../utils/createError");
 const Users = require("../api/models/users");
-const { verifyJwt } = require("../config/jwt");
+// const { verifyJwt } = require("../config/jwt");
+const {verifyJwt}=require("../utils/jwt")
 
 const isAuth = async (req, res, next) => {
   try {

@@ -23,6 +23,8 @@ userRouter.post("/login", login);
 // solo podran consultar los
 // usuarios registrados el perfil de propietario
 
-userRouter.get("/register", isAuth, authorize(["owner"]), getAllUsers);
+// MEJORO LA DESCRIPCION DE LA RUTA PAR QUE NO SEA CONFUSA Y LO HAGO CON REGIRSTERED-USERS
+
+userRouter.get("/registered-users", isAuth, authorize(["owner"]), getAllUsers);
 
 module.exports = userRouter;
